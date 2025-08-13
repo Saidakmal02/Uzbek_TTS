@@ -63,3 +63,33 @@ Uzbek_TTS/
    # Place the downloaded model.safetensors file in ckpts/
    # The file structure should be: ckpts/model.safetensors
    ```
+## Quick Start
+
+### Basic Usage
+
+```python
+from omegaconf import OmegaConf
+from hydra.utils import get_class
+from tts import TTS
+
+# Load configuration
+model_cfg = OmegaConf.load('config/UZTTS_conf.yaml')
+
+# Initialize TTS
+tts = TTS(
+    ref_audio_path="test_data/test_erkak.wav",
+    ref_text="Jizzax kollejlarida infraqizil aniqlagichli turniketlar o'rnatilmoqda.",
+    model_cfg=model_cfg,
+    model_cls=get_class(f"uz_tts.model.{model_cfg.model.backbone}"),
+    vocab='config/uz_vocab.txt',
+    ckpt_path="ckpts/UZ.safetensors",
+    device="auto",
+    speed=1.0
+)
+
+# Generate speech
+audio, sample_rate = tts.generate_speech("Assalomu alaykum! Bu Uzbek TTS tizimidir.")
+
+# Save audio
+tts.save_audio(audio, "output.wav")
+```
